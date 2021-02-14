@@ -1,5 +1,6 @@
 package com.youngchayoungcha.tastynote.domain;
 
+import com.youngchayoungcha.tastynote.domain.dto.NoteDTO;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -15,10 +16,11 @@ public class Note {
     @Column(name = "note_id")
     private Long id;
 
-    private String name;
+    @Column(nullable = false)
+    private String title;
 
     // 연관관계의 주체
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -26,4 +28,23 @@ public class Note {
     // 해결하려면 JPQL Fetch join을 이용할 것.
     @OneToMany(mappedBy = "note", fetch = FetchType.LAZY)
     private Set<Post> posts = new LinkedHashSet<>();
+
+    protected Note(){}
+
+    public static Note createNote(String title, Member member){
+        Note note = new Note();
+        note.title = title;
+        // 양방향 설정
+        member.addNotes(note);
+        note.member = member;
+        return note;
+    }
+
+    public void setMember(Member member){
+        this.member = member;
+    }
+
+    public void modifyNote(String title) {
+        this.title = title;
+    }
 }
