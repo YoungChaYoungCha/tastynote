@@ -1,4 +1,4 @@
-package com.youngchayoungcha.tastynote.domain.dto;
+package com.youngchayoungcha.tastynote.web.dto;
 
 import com.youngchayoungcha.tastynote.domain.Note;
 import com.youngchayoungcha.tastynote.domain.Post;

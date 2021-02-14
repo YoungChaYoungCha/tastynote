@@ -2,7 +2,7 @@ package com.youngchayoungcha.tastynote.service;
 
 import com.youngchayoungcha.tastynote.domain.Member;
 import com.youngchayoungcha.tastynote.domain.Note;
-import com.youngchayoungcha.tastynote.domain.dto.NoteDTO;
+import com.youngchayoungcha.tastynote.web.dto.NoteDTO;
 import com.youngchayoungcha.tastynote.exception.ElementNotFoundException;
 import com.youngchayoungcha.tastynote.repository.MemberRepository;
 import com.youngchayoungcha.tastynote.repository.NoteRepository;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service

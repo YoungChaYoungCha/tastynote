@@ -2,7 +2,7 @@ package com.youngchayoungcha.tastynote.service;
 
 import com.youngchayoungcha.tastynote.domain.Member;
 import com.youngchayoungcha.tastynote.domain.Note;
-import com.youngchayoungcha.tastynote.domain.dto.NoteDTO;
+import com.youngchayoungcha.tastynote.web.dto.NoteDTO;
 import com.youngchayoungcha.tastynote.repository.MemberRepository;
 import com.youngchayoungcha.tastynote.repository.NoteRepository;
 import org.junit.jupiter.api.Assertions;

@@ -1,6 +1,5 @@
 package com.youngchayoungcha.tastynote.domain;
 
-import com.youngchayoungcha.tastynote.domain.dto.NoteDTO;
 import lombok.Getter;
 
 import javax.persistence.*;

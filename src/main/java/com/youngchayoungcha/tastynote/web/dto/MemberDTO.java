@@ -1,4 +1,4 @@
-package com.youngchayoungcha.tastynote.domain.dto;
+package com.youngchayoungcha.tastynote.web.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
