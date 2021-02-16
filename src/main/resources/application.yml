@@ -12,5 +12,13 @@ spring:
       hibernate:
         format_sql: true
 
+  servlet:
+    multipart:
+      enabled: true
+      location: ${java.io.tmpdir}
+      max-file-size: 1MB
+      max-request-size: 1MB
+
 logging.level:
   org.hibernate.SQL: debug
+  org.hibernate.type.descriptor.sql: trace

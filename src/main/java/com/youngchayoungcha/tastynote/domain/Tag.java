@@ -1,12 +1,15 @@
 package com.youngchayoungcha.tastynote.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
 
     @Id @GeneratedValue
@@ -19,5 +22,10 @@ public class Tag {
     @OneToMany(mappedBy = "tag")
     private List<PostTag> postTags;
 
+    public static Tag createTag(String name) {
+        Tag tag = new Tag();
+        tag.name = name;
+        return tag;
+    }
 
 }

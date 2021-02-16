@@ -2,19 +2,14 @@ package com.youngchayoungcha.tastynote.web.dto;
 
 import com.youngchayoungcha.tastynote.domain.Note;
 import com.youngchayoungcha.tastynote.domain.Post;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class NoteDTO {
-
 
     private Long id;
 

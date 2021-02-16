@@ -25,7 +25,6 @@ public class NoteServiceTest {
     MemberRepository memberRepository;
     @Autowired
     NoteRepository noteRepository;
-
     @Autowired
     NoteService noteService;
 
