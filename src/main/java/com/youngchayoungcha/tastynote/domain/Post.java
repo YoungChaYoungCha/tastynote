@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Post {
+public class Post extends BaseTimeEntity{
 
     @Id @GeneratedValue
     @Column(name = "post_id")
