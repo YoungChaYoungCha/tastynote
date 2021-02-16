@@ -5,6 +5,7 @@ import com.youngchayoungcha.tastynote.domain.Post;
 import lombok.*;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +16,7 @@ public class NoteDTO {
 
     private String title;
 
-    private Set<Post> posts;
+    private Set<PostResponseDTO> posts;
 
     public NoteDTO(String title) {
         this.title = title;
@@ -25,7 +26,7 @@ public class NoteDTO {
         NoteDTO noteDTO = new NoteDTO();
         noteDTO.id = note.getId();
         noteDTO.title = note.getTitle();
-        noteDTO.posts = note.getPosts();
+        noteDTO.posts = note.getPosts().stream().map(PostResponseDTO::fromEntity).collect(Collectors.toSet());
         return noteDTO;
     }
 
