@@ -17,9 +17,10 @@ public class NoteController {
     private final NoteService noteService;
 
     @PostMapping
-    public ResponseEntity<NoteDTO> addNote(@RequestBody NoteDTO noteDTO){
+    public ResponseEntity<NoteDTO> addNote(@RequestBody String title){
         // TODO Security Context Holder에서 member Id 불러올 것.
-        NoteDTO note = noteService.createNote(1L, noteDTO);
+        System.out.println(title);
+        NoteDTO note = noteService.createNote(1L, title);
         return new ResponseEntity<>(note, HttpStatus.OK);
     }
 
@@ -30,8 +31,8 @@ public class NoteController {
     }
 
     @PatchMapping(value = "/{noteId}")
-    public ResponseEntity<NoteDTO> modifyNote(@PathVariable(value = "noteId") Long noteId, @RequestBody NoteDTO noteDTO) {
-        NoteDTO note = noteService.updateNote(noteId, noteDTO);
+    public ResponseEntity<NoteDTO> modifyNote(@PathVariable(value = "noteId") Long noteId, @RequestBody String title) {
+        NoteDTO note = noteService.updateNote(noteId, title);
         return new ResponseEntity<>(note, HttpStatus.OK);
     }
 

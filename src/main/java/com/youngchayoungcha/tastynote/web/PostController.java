@@ -24,13 +24,13 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<PostResponseDTO> recordPost(@RequestBody PostCreateDTO postDTO) throws IOException {
-        return new ResponseEntity<>(postService.createPost(postDTO), HttpStatus.OK);
+    public ResponseEntity<PostResponseDTO> recordPost(@RequestBody PostCreateDTO post) throws IOException {
+        return new ResponseEntity<>(postService.createPost(post), HttpStatus.OK);
     }
 
     @PutMapping(value = "/{postId}")
-    public ResponseEntity<PostResponseDTO> modifyPost(@PathVariable(value = "postId") Long postId, @RequestBody PostModifyDTO postDTO) throws IOException{
-        return new ResponseEntity<>(postService.modifyPost(postDTO), HttpStatus.OK);
+    public ResponseEntity<PostResponseDTO> modifyPost(@PathVariable(value = "postId") Long postId, @RequestBody PostModifyDTO post) throws IOException{
+        return new ResponseEntity<>(postService.modifyPost(post), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{postId}")

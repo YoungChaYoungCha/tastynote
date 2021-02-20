@@ -42,7 +42,7 @@ public class PostServiceTest {
         //given
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
         Long memberId = memberRepository.createMember(member);
-        NoteDTO note = noteService.createNote(memberId, new NoteDTO("라멘노트"));
+        NoteDTO note = noteService.createNote(memberId,"라멘노트");
 
         //when
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
@@ -63,7 +63,7 @@ public class PostServiceTest {
         //given
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
         Long memberId = memberRepository.createMember(member);
-        NoteDTO note = noteService.createNote(memberId, new NoteDTO("라멘노트"));
+        NoteDTO note = noteService.createNote(memberId,"라멘노트");
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
         List<String> tags = Collections.singletonList("태그");
@@ -81,7 +81,7 @@ public class PostServiceTest {
         //given
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
         Long memberId = memberRepository.createMember(member);
-        NoteDTO note = noteService.createNote(memberId, new NoteDTO("라멘노트"));
+        NoteDTO note = noteService.createNote(memberId, "라멘노트");
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
         List<String> tags = new ArrayList<String>() {
