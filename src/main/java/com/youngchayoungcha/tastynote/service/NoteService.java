@@ -22,18 +22,18 @@ public class NoteService {
     private final NoteRepository noteRepository;
 
     @Transactional
-    public NoteDTO createNote(Long memberId, NoteDTO noteDTO){
+    public NoteDTO createNote(Long memberId, String title){
         Member member = memberRepository.findMember(memberId);
-        return NoteDTO.fromEntity(noteRepository.save(Note.createNote(noteDTO.getTitle(), member)));
+        return NoteDTO.fromEntity(noteRepository.save(Note.createNote(title, member)));
     }
 
     @Transactional
-    public NoteDTO updateNote(Long noteId, NoteDTO noteDTO) {
+    public NoteDTO updateNote(Long noteId, String title) {
         Optional<Note> note = noteRepository.findNote(noteId);
         note.orElseThrow(() -> new ElementNotFoundException(noteId));
 
         Note noteEntity = note.get();
-        noteEntity.modifyNote(noteDTO.getTitle());
+        noteEntity.modifyNote(title);
         return NoteDTO.fromEntity(noteEntity);
     }
 

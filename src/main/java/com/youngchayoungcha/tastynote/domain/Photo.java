@@ -1,11 +1,12 @@
 package com.youngchayoungcha.tastynote.domain;
 
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Photo {
 
     @Id @GeneratedValue
@@ -20,4 +21,10 @@ public class Photo {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    public static Photo createPhoto(String url, String comment){
+        Photo photo = new Photo();
+        photo.url = url;
+        photo.comment = comment;
+        return photo;
+    }
 }

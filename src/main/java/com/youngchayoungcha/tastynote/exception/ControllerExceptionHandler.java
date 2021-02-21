@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import java.io.IOException;
 
 // Controller 혹은 Rest Controller에서 발생한 예외를 한 곳에서 관리하고 처리할 수 있게 도와주는 어노테이션.
 @RestControllerAdvice
@@ -21,5 +22,15 @@ public class ControllerExceptionHandler {
                 .message("Element Not found")
                 .status(404);
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(IOException.class)
+    protected ResponseEntity<ErrorResponse> handleIoException(){
+        logger.error("File io exception has been occurred");
+
+        ErrorResponse errorResponse = ErrorResponse.create()
+                .message("File upload error")
+                .status(500);
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
