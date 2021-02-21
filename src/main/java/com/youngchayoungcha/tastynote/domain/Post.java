@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public class Post extends BaseTimeEntity{
     private Long id;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private Set<Photo> photos;
+    private List<Photo> photos = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "note_id")
@@ -36,9 +37,9 @@ public class Post extends BaseTimeEntity{
     private boolean isPublic;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<PostTag> postTags = new ArrayList<>();
+    private Set<PostTag> postTags = new LinkedHashSet<>();
 
-    public static Post createPost(PostCreateDTO postDTO, Set<Photo> photos, Note note, List<Tag> tags){
+    public static Post createPost(PostCreateDTO postDTO, List<Photo> photos, Note note, Set<Tag> tags){
         Post post = new Post();
         post.title = postDTO.getTitle();
         post.content = postDTO.getContent();
@@ -50,7 +51,7 @@ public class Post extends BaseTimeEntity{
         return post;
     }
 
-    public void modifyPost(PostModifyDTO postDTO, Set<Photo> photos, List<Tag> tags, Set<String> deleteTags){
+    public void modifyPost(PostModifyDTO postDTO, List<Photo> photos, Set<Tag> tags, Set<String> deleteTags){
         this.title = postDTO.getTitle();
         this.content = postDTO.getContent();
         this.score = postDTO.getScore();
@@ -58,9 +59,9 @@ public class Post extends BaseTimeEntity{
         this.photos.addAll(photos);
         Set<Long> photoIds = this.photos.stream().map(Photo::getId).collect(Collectors.toSet());
         photoIds.retainAll(postDTO.getDeletedPhotoIds());
-        this.photos = photos.stream().filter(data -> !photoIds.contains(data.getId())).collect(Collectors.toSet());
+        this.photos = photos.stream().filter(data -> !photoIds.contains(data.getId())).collect(Collectors.toList());
         this.addTags(tags);
-        this.postTags = this.postTags.stream().filter(postTag -> !deleteTags.contains(postTag.getTag().getName())).collect(Collectors.toList());
+        this.postTags = this.postTags.stream().filter(postTag -> !deleteTags.contains(postTag.getTag().getName())).collect(Collectors.toSet());
     }
 
     public void setNote(Note note) {
@@ -68,7 +69,7 @@ public class Post extends BaseTimeEntity{
         note.getPosts().add(this);
     }
 
-    public void addTags(List<Tag> tags){
+    public void addTags(Set<Tag> tags){
         for (Tag tag : tags) {
             PostTag postTag = PostTag.createPostTag(this, tag);
             postTags.add(postTag);

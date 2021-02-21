@@ -35,9 +35,9 @@ public class PostService {
         note.orElseThrow(() -> new ElementNotFoundException(postDTO.getNoteId()));
 
         List<PhotoRequestDTO> photoDTOs = postDTO.getPhotos();
-        Set<Photo> photos = generatePhotos(photoDTOs);
+        List<Photo> photos = generatePhotos(photoDTOs);
 
-        List<Tag> tags = findOrCreateTag(postDTO.getTags());
+        Set<Tag> tags = findOrCreateTag(postDTO.getTags());
 
         Post post = Post.createPost(postDTO, photos, note.get(), tags);
         postRepository.save(post);
@@ -56,12 +56,12 @@ public class PostService {
         Optional<Post> post = postRepository.findPost(postDTO.getPostId());
         post.orElseThrow(() -> new ElementNotFoundException(postDTO.getPostId()));
 
-        Set<Photo> photos = generatePhotos(postDTO.getNewPhotos());
+        List<Photo> photos = generatePhotos(postDTO.getNewPhotos());
         // 기존 업로드된 파일은 로컬 스토리지에서 삭제.
         photoRepository.getPhotoUrlsByIds(postDTO.getDeletedPhotoIds()).forEach(FileUtils::deleteUploadedFileByUrl);
 
         List<TagModifyDTO> createEvent = postDTO.getTagEvents().stream().filter((data) -> data.getStatus().equals(TagEventStatus.CREATE)).collect(Collectors.toList());
-        List<Tag> tags = findOrCreateTag(createEvent.stream().map(TagModifyDTO::getTag).collect(Collectors.toList()));
+        Set<Tag> tags = findOrCreateTag(createEvent.stream().map(TagModifyDTO::getTag).collect(Collectors.toList()));
         Set<String> deleteTags = postDTO.getTagEvents().stream().filter((data) -> data.getStatus().equals(TagEventStatus.DELETE)).map(TagModifyDTO::getTag).collect(Collectors.toSet());
 
         post.get().modifyPost(postDTO, photos, tags, deleteTags);
@@ -76,8 +76,8 @@ public class PostService {
         postRepository.delete(post.get());
     }
 
-    private Set<Photo> generatePhotos(List<PhotoRequestDTO> photoDTOs) throws IOException{
-        Set<Photo> photos = new LinkedHashSet<>();
+    private List<Photo> generatePhotos(List<PhotoRequestDTO> photoDTOs) throws IOException{
+        List<Photo> photos = new ArrayList<>();
         for (PhotoRequestDTO photo : photoDTOs) {
             String fileName = StringUtils.cleanPath(Objects.requireNonNull(photo.getFile().getOriginalFilename()));
             String newFileName = UUID.randomUUID() + "." + FileUtils.getFileExtensions(fileName);
@@ -87,12 +87,12 @@ public class PostService {
         return photos;
     }
 
-    private List<Tag> findOrCreateTag(List<String> tagNames){
-        List<Tag> tags = tagRepository.findByNameIn(tagNames);
+    private Set<Tag> findOrCreateTag(List<String> tagNames){
+        Set<Tag> tags = tagRepository.findByNameIn(tagNames);
         List<String> existsTags = tags.stream().map(Tag::getName).collect(Collectors.toList());
         tagNames.removeAll(existsTags);
 
-        List<Tag> resultTags = new ArrayList<>(tags);
+        Set<Tag> resultTags = new LinkedHashSet<>(tags);
         for (String tagName : tagNames) {
             Tag tag = Tag.createTag(tagName);
             tagRepository.save(tag);
