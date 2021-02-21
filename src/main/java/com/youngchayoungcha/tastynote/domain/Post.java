@@ -2,8 +2,6 @@ package com.youngchayoungcha.tastynote.domain;
 
 import com.youngchayoungcha.tastynote.web.dto.PostCreateDTO;
 import com.youngchayoungcha.tastynote.web.dto.PostModifyDTO;
-import com.youngchayoungcha.tastynote.web.dto.TagEventStatus;
-import com.youngchayoungcha.tastynote.web.dto.TagModifyDTO;
 import lombok.*;
 
 import javax.persistence.*;

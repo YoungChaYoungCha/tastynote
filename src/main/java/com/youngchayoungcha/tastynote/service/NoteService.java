@@ -2,10 +2,10 @@ package com.youngchayoungcha.tastynote.service;
 
 import com.youngchayoungcha.tastynote.domain.Member;
 import com.youngchayoungcha.tastynote.domain.Note;
+import com.youngchayoungcha.tastynote.repository.NoteRepository;
 import com.youngchayoungcha.tastynote.web.dto.NoteDTO;
 import com.youngchayoungcha.tastynote.exception.ElementNotFoundException;
 import com.youngchayoungcha.tastynote.repository.MemberRepository;
-import com.youngchayoungcha.tastynote.repository.NoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +41,7 @@ public class NoteService {
     public Long deleteNote(Long noteId) {
         Optional<Note> note = noteRepository.findNote(noteId);
         note.orElseThrow(() -> new ElementNotFoundException(noteId));
-        noteRepository.deleteNote(note.get());
+        noteRepository.delete(note.get());
         return noteId;
     }
 

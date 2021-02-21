@@ -2,9 +2,9 @@ package com.youngchayoungcha.tastynote.service;
 
 import com.youngchayoungcha.tastynote.domain.Member;
 import com.youngchayoungcha.tastynote.domain.Note;
+import com.youngchayoungcha.tastynote.repository.NoteRepository;
 import com.youngchayoungcha.tastynote.web.dto.NoteDTO;
 import com.youngchayoungcha.tastynote.repository.MemberRepository;
-import com.youngchayoungcha.tastynote.repository.NoteRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +35,6 @@ public class NoteServiceTest {
         //given
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
         Long memberId = memberRepository.createMember(member);
-
 
         //when
         NoteDTO note = noteService.createNote(memberId, "라멘노트");
