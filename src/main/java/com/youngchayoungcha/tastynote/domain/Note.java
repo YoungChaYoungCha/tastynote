@@ -1,13 +1,18 @@
 package com.youngchayoungcha.tastynote.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Note {
 
     @Id
@@ -26,9 +31,7 @@ public class Note {
     // Lazy로 거는 것은 N+1 문제 때문
     // 해결하려면 JPQL Fetch join을 이용할 것.
     @OneToMany(mappedBy = "note", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Post> posts = new LinkedHashSet<>();
-
-    protected Note(){}
+    private List<Post> posts = new ArrayList<>();
 
     public static Note createNote(String title, Member member){
         Note note = new Note();

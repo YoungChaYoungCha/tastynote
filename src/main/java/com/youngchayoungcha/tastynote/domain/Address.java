@@ -1,17 +1,18 @@
 package com.youngchayoungcha.tastynote.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Embeddable;
 
 @Embeddable
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Address {
 
     // TODO 위도와 경도
-    private String city;
-    private String street;
-    private String zipcode;
+    private String formattedAddress;
+    private Double latitude;
+    private Double longitude;
 }

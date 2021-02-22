@@ -24,6 +24,8 @@ public class PostResponseDTO {
 
     private List<TagResponseDTO> tags = new ArrayList<>();
 
+    private RestaurantDTO restaurant;
+
     public static PostResponseDTO fromEntity(Post post) {
         PostResponseDTO postDTO = new PostResponseDTO();
         postDTO.id = post.getId();
@@ -33,6 +35,7 @@ public class PostResponseDTO {
         postDTO.isPublic = post.isPublic();
         postDTO.photos = post.getPhotos().stream().map(PhotoResponseDTO::fromEntity).collect(Collectors.toList());
         postDTO.tags = post.getPostTags().stream().map(postTag -> TagResponseDTO.fromEntity(postTag.getTag())).collect(Collectors.toList());
+        postDTO.restaurant = RestaurantDTO.fromEntity(post.getRestaurant());
         return postDTO;
     }
 }

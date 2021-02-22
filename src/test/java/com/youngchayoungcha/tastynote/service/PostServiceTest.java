@@ -48,7 +48,8 @@ public class PostServiceTest {
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
         List<String> tags = Collections.singletonList("태그");
-        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(note.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags));
+        RestaurantDTO restaurantDTO = new RestaurantDTO("efwfzdf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
+        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(note.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
         Optional<Post> post = postRepository.findPost(postResponseDTO.getId());
 
         //then
@@ -67,7 +68,8 @@ public class PostServiceTest {
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
         List<String> tags = Collections.singletonList("태그");
-        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(note.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags));
+        RestaurantDTO restaurantDTO = new RestaurantDTO("efwfzdf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
+        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(note.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
 
         //when
         postService.deletePost(postResponseDTO.getId());
@@ -92,7 +94,8 @@ public class PostServiceTest {
                 add("태그4");
             }
         };
-        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(note.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags));
+        RestaurantDTO restaurantDTO = new RestaurantDTO("efwfzdf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
+        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(note.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
 
         //when
         MockMultipartFile modifiedFile = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());

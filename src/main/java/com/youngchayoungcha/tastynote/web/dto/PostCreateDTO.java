@@ -26,4 +26,6 @@ public class PostCreateDTO {
 
     private List<String> tags = new ArrayList<>();
 
+    private RestaurantDTO restaurant;
+
 }

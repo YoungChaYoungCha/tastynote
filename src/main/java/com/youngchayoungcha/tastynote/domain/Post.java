@@ -39,13 +39,18 @@ public class Post extends BaseTimeEntity{
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private Set<PostTag> postTags = new LinkedHashSet<>();
 
-    public static Post createPost(PostCreateDTO postDTO, List<Photo> photos, Note note, Set<Tag> tags){
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
+
+    public static Post createPost(PostCreateDTO postDTO, List<Photo> photos, Note note, Set<Tag> tags, Restaurant restaurant){
         Post post = new Post();
         post.title = postDTO.getTitle();
         post.content = postDTO.getContent();
         post.score = postDTO.getScore();
         post.isPublic = postDTO.isPublic();
         post.note = note;
+        post.restaurant = restaurant;
         post.photos = photos;
         post.addTags(tags);
         return post;
@@ -64,16 +69,10 @@ public class Post extends BaseTimeEntity{
         this.postTags = this.postTags.stream().filter(postTag -> !deleteTags.contains(postTag.getTag().getName())).collect(Collectors.toSet());
     }
 
-    public void setNote(Note note) {
-        this.note = note;
-        note.getPosts().add(this);
-    }
-
-    public void addTags(Set<Tag> tags){
+    private void addTags(Set<Tag> tags){
         for (Tag tag : tags) {
             PostTag postTag = PostTag.createPostTag(this, tag);
             postTags.add(postTag);
         }
     }
-
 }

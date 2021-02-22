@@ -1,12 +1,10 @@
 package com.youngchayoungcha.tastynote.service;
 
 import com.youngchayoungcha.tastynote.config.FileConfig;
-import com.youngchayoungcha.tastynote.domain.Note;
-import com.youngchayoungcha.tastynote.domain.Photo;
-import com.youngchayoungcha.tastynote.domain.Post;
-import com.youngchayoungcha.tastynote.domain.Tag;
+import com.youngchayoungcha.tastynote.domain.*;
 import com.youngchayoungcha.tastynote.repository.*;
 import com.youngchayoungcha.tastynote.repository.impl.PhotoRepository;
+import com.youngchayoungcha.tastynote.repository.RestaurantRepository;
 import com.youngchayoungcha.tastynote.util.FileUtils;
 import com.youngchayoungcha.tastynote.web.dto.*;
 import com.youngchayoungcha.tastynote.exception.ElementNotFoundException;
@@ -28,6 +26,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final PhotoRepository photoRepository;
+    private final RestaurantRepository restaurantRepository;
 
     @Transactional
     public PostResponseDTO createPost(PostCreateDTO postDTO) throws IOException {
@@ -38,8 +37,9 @@ public class PostService {
         List<Photo> photos = generatePhotos(photoDTOs);
 
         Set<Tag> tags = findOrCreateTag(postDTO.getTags());
+        Restaurant restaurant = findOrCreateRestaurant(postDTO.getRestaurant());
 
-        Post post = Post.createPost(postDTO, photos, note.get(), tags);
+        Post post = Post.createPost(postDTO, photos, note.get(), tags, restaurant);
         postRepository.save(post);
         return PostResponseDTO.fromEntity(post);
     }
@@ -99,5 +99,9 @@ public class PostService {
             resultTags.add(tag);
         }
         return resultTags;
+    }
+
+    private Restaurant findOrCreateRestaurant(RestaurantDTO dto) {
+        return restaurantRepository.findById(dto.getPlaceId()).orElse(Restaurant.createRestaurant(dto.getPlaceId(), dto.getName(), dto.getFormattedAddress(), dto.getLatitude(), dto.getLongitude()));
     }
 }
