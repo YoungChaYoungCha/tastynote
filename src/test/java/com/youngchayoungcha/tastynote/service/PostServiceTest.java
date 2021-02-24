@@ -5,11 +5,9 @@ import com.youngchayoungcha.tastynote.domain.Member;
 import com.youngchayoungcha.tastynote.domain.Post;
 import com.youngchayoungcha.tastynote.exception.ElementNotFoundException;
 import com.youngchayoungcha.tastynote.repository.MemberRepository;
-import com.youngchayoungcha.tastynote.repository.NoteRepository;
 import com.youngchayoungcha.tastynote.repository.PostRepository;
 import com.youngchayoungcha.tastynote.web.dto.*;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,29 +25,34 @@ import java.util.*;
 public class PostServiceTest {
 
     @Autowired
-    MemberRepository memberRepository;
+    private MemberRepository memberRepository;
     @Autowired
-    NoteRepository noteRepository;
+    private NoteService noteService;
     @Autowired
-    NoteService noteService;
+    private PostService postService;
     @Autowired
-    PostService postService;
-    @Autowired
-    PostRepository postRepository;
+    private PostRepository postRepository;
+
+    private Member member;
+
+    private NoteDTO noteDTO;
+
+    @BeforeEach
+    public void initData() throws IOException {
+        member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
+        Long memberId = memberRepository.createMember(member);
+        noteDTO = noteService.createNote(memberId, "라멘노트");
+    }
 
     @Test
     public void 포스트_생성_테스트() throws IOException {
-        //given
-        Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.createMember(member);
-        NoteDTO note = noteService.createNote(memberId,"라멘노트");
 
         //when
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
         List<String> tags = Collections.singletonList("태그");
         RestaurantDTO restaurantDTO = new RestaurantDTO("efwfzdf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
-        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(note.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
+        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
         Optional<Post> post = postRepository.findPost(postResponseDTO.getId());
 
         //then
@@ -61,15 +64,11 @@ public class PostServiceTest {
 
     @Test
     public void 포스트_삭제_테스트() throws IOException {
-        //given
-        Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.createMember(member);
-        NoteDTO note = noteService.createNote(memberId,"라멘노트");
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
         List<String> tags = Collections.singletonList("태그");
         RestaurantDTO restaurantDTO = new RestaurantDTO("efwfzdf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
-        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(note.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
+        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
 
         //when
         postService.deletePost(postResponseDTO.getId());
@@ -81,9 +80,6 @@ public class PostServiceTest {
     @Test
     public void 포스트_업데이트_테스트() throws IOException {
         //given
-        Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.createMember(member);
-        NoteDTO note = noteService.createNote(memberId, "라멘노트");
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
         List<String> tags = new ArrayList<String>() {
@@ -95,7 +91,7 @@ public class PostServiceTest {
             }
         };
         RestaurantDTO restaurantDTO = new RestaurantDTO("efwfzdf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
-        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(note.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
+        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
 
         //when
         MockMultipartFile modifiedFile = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
@@ -109,10 +105,46 @@ public class PostServiceTest {
         Assertions.assertEquals(modifiedPostDTO.getScore(), (short) 6);
         Assertions.assertEquals(modifiedPostDTO.getPhotos().size(), 1);
         Assertions.assertEquals(modifiedPostDTO.getTags().size(), 4);
+
         // 사진이 제대로 삭제되었는지 테스트
         String url = postResponseDTO.getPhotos().get(0).getFileUrl();
         String filePath = url.replace(FileConfig.uploadFileBaseUrl, FileConfig.uploadFileBasePath);
         File file2 = new File(filePath);
         Assertions.assertFalse(file2.exists());
+    }
+
+    @Test
+    public void 포스트리스트_조회_테스트() throws IOException {
+        for (int i = 0; i < 10; i++) {
+            MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
+            List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해" + i));
+            List<String> tags = new ArrayList<String>() {
+                {
+                    add("태그");
+                }
+            };
+            RestaurantDTO restaurantDTO = new RestaurantDTO("dfqweqt" + i, "멘텐" + i, "대한민국 서울특별시 ", 1.4, 2.4);
+            postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목" + i, "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
+        }
+        //when
+        List<PostResponseDTO> postList1 = postService.getPostList(0, 5);
+        List<PostResponseDTO> postList2 = postService.getPostList(1, 5);
+
+        //then
+        Assertions.assertEquals(postList1.size(), 5);
+        Assertions.assertEquals(postList2.size(), 5);
+    }
+
+    @AfterEach
+    public void 테스트끝난_파일삭제() {
+        File file = new File(FileConfig.uploadFileBasePath);
+        File[] files = file.listFiles();  // 해당 폴더 안의 파일들을 files 변수에 담음
+
+        assert files != null;
+        for (File value : files) { // 개수만큼 루프
+            if (value.isFile()) { // 파일일경우 해당파일 삭제
+                value.delete();
+            }
+        }
     }
 }

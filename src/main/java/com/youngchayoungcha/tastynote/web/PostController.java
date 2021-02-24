@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "posts")
@@ -21,6 +22,13 @@ public class PostController {
     @GetMapping(value = "/{postId}")
     public ResponseEntity<PostResponseDTO> getPost(@PathVariable(value = "postId") Long postId){
         return new ResponseEntity<>(postService.findPost(postId), HttpStatus.OK);
+    }
+
+    // Page 5 씩 index
+    @GetMapping
+    public ResponseEntity<List<PostResponseDTO>> getPostList(@RequestParam(value = "page")int page, @RequestParam(value = "length", defaultValue = "5")int size) {
+        // TODO Filter Type -> 최신순, 거리순,
+        return new ResponseEntity<>(postService.getPostList(page, size), HttpStatus.OK);
     }
 
     @PostMapping

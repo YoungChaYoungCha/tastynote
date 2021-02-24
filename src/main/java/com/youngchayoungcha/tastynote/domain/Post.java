@@ -39,7 +39,7 @@ public class Post extends BaseTimeEntity{
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private Set<PostTag> postTags = new LinkedHashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 

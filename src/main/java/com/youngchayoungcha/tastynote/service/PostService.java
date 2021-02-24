@@ -10,9 +10,9 @@ import com.youngchayoungcha.tastynote.web.dto.*;
 import com.youngchayoungcha.tastynote.exception.ElementNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PostService {
 
     private final NoteRepository noteRepository;
@@ -49,6 +50,11 @@ public class PostService {
         post.orElseThrow(() -> new ElementNotFoundException(postId));
 
         return PostResponseDTO.fromEntity(post.get());
+    }
+
+    public List<PostResponseDTO> getPostList(int page, int size){
+        List<Post> postList = postRepository.getPostList(page, size);
+        return postList.stream().map(PostResponseDTO::fromEntity).collect(Collectors.toList());
     }
 
     @Transactional

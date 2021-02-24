@@ -3,6 +3,7 @@ package com.youngchayoungcha.tastynote.web.dto;
 import com.youngchayoungcha.tastynote.domain.Post;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +27,8 @@ public class PostResponseDTO {
 
     private RestaurantDTO restaurant;
 
+    private LocalDateTime createdDateTime;
+
     public static PostResponseDTO fromEntity(Post post) {
         PostResponseDTO postDTO = new PostResponseDTO();
         postDTO.id = post.getId();
@@ -33,6 +36,7 @@ public class PostResponseDTO {
         postDTO.title = post.getTitle();
         postDTO.score = post.getScore();
         postDTO.isPublic = post.isPublic();
+        postDTO.createdDateTime = post.getCreatedDateTime();
         postDTO.photos = post.getPhotos().stream().map(PhotoResponseDTO::fromEntity).collect(Collectors.toList());
         postDTO.tags = post.getPostTags().stream().map(postTag -> TagResponseDTO.fromEntity(postTag.getTag())).collect(Collectors.toList());
         postDTO.restaurant = RestaurantDTO.fromEntity(post.getRestaurant());

@@ -5,6 +5,7 @@ import com.youngchayoungcha.tastynote.repository.AbstractCustomRepository;
 import com.youngchayoungcha.tastynote.repository.PostCustomRepository;
 import static com.youngchayoungcha.tastynote.domain.QPost.post;
 
+import java.util.List;
 import java.util.Optional;
 
 public class PostRepositoryImpl extends AbstractCustomRepository implements PostCustomRepository {
@@ -14,5 +15,13 @@ public class PostRepositoryImpl extends AbstractCustomRepository implements Post
         return getQueryFactory().selectFrom(post).leftJoin(post.photos).fetchJoin().
                 leftJoin(post.postTags).fetchJoin().
                 where(post.id.eq(postId)).fetch().stream().findFirst();
+    }
+
+    @Override
+    public List<Post> getPostList(int page, int size) {
+        return getQueryFactory().selectFrom(post).leftJoin(post.photos).fetchJoin()
+                .leftJoin(post.postTags).fetchJoin()
+                .where(post.isPublic.eq(true))
+                .orderBy(post.createdDateTime.desc()).offset((long) page * size).limit(size).fetch();
     }
 }
