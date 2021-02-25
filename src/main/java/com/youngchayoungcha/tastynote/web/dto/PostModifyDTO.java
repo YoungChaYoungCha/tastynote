@@ -20,7 +20,7 @@ public class PostModifyDTO {
 
     private String content;
 
-    private short score;
+    private Float score;
 
     private boolean isPublic;
 

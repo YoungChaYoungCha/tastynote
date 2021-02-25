@@ -17,7 +17,7 @@ public class PostResponseDTO {
 
     private String content;
 
-    private short score;
+    private Float score;
 
     private boolean isPublic;
 

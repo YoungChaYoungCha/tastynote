@@ -24,4 +24,18 @@ public class PostRepositoryImpl extends AbstractCustomRepository implements Post
                 .where(post.isPublic.eq(true))
                 .orderBy(post.createdDateTime.desc()).offset((long) page * size).limit(size).fetch();
     }
+
+    @Override
+    public Long getPostNumByRestaurantId(String restaurantId) {
+        return getQueryFactory().selectFrom(post).
+                innerJoin(post.restaurant).
+                where(post.restaurant.id.eq(restaurantId)).fetchCount();
+    }
+
+    @Override
+    public Float getRestaurantScoreSum(String restaurantId) {
+        return getQueryFactory().select(post.score.sum()).from(post)
+                .innerJoin(post.restaurant)
+                .where(post.restaurant.id.eq(restaurantId)).fetchFirst();
+    }
 }

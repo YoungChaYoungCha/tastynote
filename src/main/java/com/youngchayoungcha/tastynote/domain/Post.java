@@ -32,7 +32,7 @@ public class Post extends BaseTimeEntity{
 
     private String content;
 
-    private short score;
+    private Float score;
 
     private boolean isPublic;
 
@@ -49,9 +49,9 @@ public class Post extends BaseTimeEntity{
         post.content = postDTO.getContent();
         post.score = postDTO.getScore();
         post.isPublic = postDTO.isPublic();
-        post.note = note;
-        post.restaurant = restaurant;
-        post.photos = photos;
+        post.setNote(note);
+        post.setRestaurant(restaurant);
+        post.setPhotos(photos);
         post.addTags(tags);
         return post;
     }
@@ -64,7 +64,7 @@ public class Post extends BaseTimeEntity{
         this.photos.addAll(photos);
         Set<Long> photoIds = this.photos.stream().map(Photo::getId).collect(Collectors.toSet());
         photoIds.retainAll(postDTO.getDeletedPhotoIds());
-        this.photos = photos.stream().filter(data -> !photoIds.contains(data.getId())).collect(Collectors.toList());
+        this.setPhotos(photos.stream().filter(data -> !photoIds.contains(data.getId())).collect(Collectors.toList()));
         this.addTags(tags);
         this.postTags = this.postTags.stream().filter(postTag -> !deleteTags.contains(postTag.getTag().getName())).collect(Collectors.toSet());
     }
@@ -73,6 +73,31 @@ public class Post extends BaseTimeEntity{
         for (Tag tag : tags) {
             PostTag postTag = PostTag.createPostTag(this, tag);
             postTags.add(postTag);
+            postTag.setPost(this);
         }
+    }
+
+    private void setRestaurant(Restaurant restaurant){
+        this.restaurant = restaurant;
+        this.getRestaurant().addPost(this);
+    }
+
+    private void setNote(Note note){
+        this.note = note;
+        this.note.getPosts().add(this);
+    }
+
+    private void setPhotos(List<Photo> photos){
+        this.photos = photos;
+        for (Photo photo : photos) {
+            photo.setPost(this);
+        }
+    }
+
+    // ManyToOne Reference Entity와의 관계를 삭제
+    @PreRemove
+    private void removeReferenceEntities(){
+        this.getNote().removePost(this);
+        this.getRestaurant().removePost(this);
     }
 }

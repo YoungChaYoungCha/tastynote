@@ -10,4 +10,8 @@ public interface PostCustomRepository {
     Optional<Post> findPost(Long postId);
 
     List<Post> getPostList(int page, int size);
+
+    Long getPostNumByRestaurantId(String restaurantId);
+
+    Float getRestaurantScoreSum(String restaurantId);
 }

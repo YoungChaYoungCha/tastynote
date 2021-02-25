@@ -27,4 +27,8 @@ public class Photo {
         photo.comment = comment;
         return photo;
     }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
 }

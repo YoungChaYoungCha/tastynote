@@ -49,4 +49,8 @@ public class Note {
     public void modifyNote(String title) {
         this.title = title;
     }
+
+    public void removePost(Post post) {
+        this.posts.remove(post);
+    }
 }

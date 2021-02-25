@@ -18,7 +18,7 @@ public class PostCreateDTO {
 
     private String content;
 
-    private short score;
+    private float score;
 
     private boolean isPublic;
 
