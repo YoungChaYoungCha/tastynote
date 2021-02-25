@@ -13,6 +13,8 @@ public class PostResponseDTO {
 
     private Long id;
 
+    private String writerNickName;
+
     private String title;
 
     private String content;
@@ -32,6 +34,7 @@ public class PostResponseDTO {
     public static PostResponseDTO fromEntity(Post post) {
         PostResponseDTO postDTO = new PostResponseDTO();
         postDTO.id = post.getId();
+        postDTO.writerNickName = post.getNote().getMember().getName();
         postDTO.content = post.getContent();
         postDTO.title = post.getTitle();
         postDTO.score = post.getScore();

@@ -19,7 +19,6 @@ public class NoteController {
     @PostMapping
     public ResponseEntity<NoteDTO> addNote(@RequestBody String title){
         // TODO Security Context Holder에서 member Id 불러올 것.
-        System.out.println(title);
         NoteDTO note = noteService.createNote(1L, title);
         return new ResponseEntity<>(note, HttpStatus.OK);
     }
