@@ -3,7 +3,7 @@ package com.youngchayoungcha.tastynote.service;
 import com.youngchayoungcha.tastynote.domain.Member;
 import com.youngchayoungcha.tastynote.domain.Note;
 import com.youngchayoungcha.tastynote.repository.NoteRepository;
-import com.youngchayoungcha.tastynote.web.dto.NoteDTO;
+import com.youngchayoungcha.tastynote.web.dto.NoteResponseDTO;
 import com.youngchayoungcha.tastynote.exception.ElementNotFoundException;
 import com.youngchayoungcha.tastynote.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,19 +23,19 @@ public class NoteService {
     private final NoteRepository noteRepository;
 
     @Transactional
-    public NoteDTO createNote(Long memberId, String title){
+    public NoteResponseDTO createNote(Long memberId, String title){
         Member member = memberRepository.findMember(memberId);
-        return NoteDTO.fromEntity(noteRepository.save(Note.createNote(title, member)));
+        return NoteResponseDTO.fromEntity(noteRepository.save(Note.createNote(title, member)));
     }
 
     @Transactional
-    public NoteDTO updateNote(Long noteId, String title) {
+    public NoteResponseDTO updateNote(Long noteId, String title) {
         Optional<Note> note = noteRepository.findNote(noteId);
         note.orElseThrow(() -> new ElementNotFoundException(noteId));
 
         Note noteEntity = note.get();
         noteEntity.modifyNote(title);
-        return NoteDTO.fromEntity(noteEntity);
+        return NoteResponseDTO.fromEntity(noteEntity);
     }
 
     @Transactional
@@ -46,13 +46,13 @@ public class NoteService {
         return noteId;
     }
 
-    public List<NoteDTO> getMemberNotes(Long memberId){
-        return noteRepository.findUserNotes(memberId).stream().map(NoteDTO::fromEntity).collect(Collectors.toList());
+    public List<NoteResponseDTO> getMemberNotes(Long memberId){
+        return noteRepository.findUserNotes(memberId).stream().map(NoteResponseDTO::fromEntity).collect(Collectors.toList());
     }
 
-    public NoteDTO getNote(Long noteId) {
+    public NoteResponseDTO getNote(Long noteId) {
         Optional<Note> note = noteRepository.findNote(noteId);
         note.orElseThrow(() -> new ElementNotFoundException(noteId));
-        return NoteDTO.fromEntity(note.get());
+        return NoteResponseDTO.fromEntity(note.get());
     }
 }

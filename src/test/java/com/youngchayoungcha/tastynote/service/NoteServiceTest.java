@@ -3,7 +3,7 @@ package com.youngchayoungcha.tastynote.service;
 import com.youngchayoungcha.tastynote.domain.Member;
 import com.youngchayoungcha.tastynote.domain.Note;
 import com.youngchayoungcha.tastynote.repository.NoteRepository;
-import com.youngchayoungcha.tastynote.web.dto.NoteDTO;
+import com.youngchayoungcha.tastynote.web.dto.NoteResponseDTO;
 import com.youngchayoungcha.tastynote.repository.MemberRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class NoteServiceTest {
         Long memberId = memberRepository.createMember(member);
 
         //when
-        NoteDTO note = noteService.createNote(memberId, "라멘노트");
+        NoteResponseDTO note = noteService.createNote(memberId, "라멘노트");
         Optional<Note> getNote = noteRepository.findNote(note.getId());
 
         //then
@@ -51,7 +51,7 @@ public class NoteServiceTest {
         //given
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
         Long memberId = memberRepository.createMember(member);
-        NoteDTO note = noteService.createNote(memberId,"라멘노트");
+        NoteResponseDTO note = noteService.createNote(memberId,"라멘노트");
 
         //when
         Optional<Note> getNote = noteRepository.findNote(note.getId());
@@ -73,7 +73,7 @@ public class NoteServiceTest {
 
         //when
         System.out.println(memberId);
-        List<NoteDTO> noteList = noteService.getMemberNotes(memberId);
+        List<NoteResponseDTO> noteList = noteService.getMemberNotes(memberId);
 
         //then
         Assertions.assertEquals(5, noteList.size());
@@ -94,11 +94,11 @@ public class NoteServiceTest {
         }
 
         //when
-        List<NoteDTO> notes = noteService.getMemberNotes(memberId);
+        List<NoteResponseDTO> notes = noteService.getMemberNotes(memberId);
         noteService.deleteNote(notes.get(0).getId());
 
         //then
-        List<NoteDTO> newNotes = noteService.getMemberNotes(memberId);
+        List<NoteResponseDTO> newNotes = noteService.getMemberNotes(memberId);
         Assertions.assertEquals(4, newNotes.size());
     }
 

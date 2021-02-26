@@ -39,7 +39,7 @@ public class PostServiceTest {
 
     private Member member;
 
-    private NoteDTO noteDTO;
+    private NoteResponseDTO noteDTO;
 
     @BeforeEach
     public void initData() throws IOException {
