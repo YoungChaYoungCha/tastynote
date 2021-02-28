@@ -23,8 +23,12 @@ public class NoteService {
 
     @Transactional
     public NoteDTO createNote(Long memberId, NoteDTO noteDTO){
-        Member member = memberRepository.findMember(memberId);
-        return NoteDTO.fromEntity(noteRepository.save(Note.createNote(noteDTO.getTitle(), member)));
+        Member member = memberRepository.findById(memberId).get();
+        return NoteDTO.fromEntity(
+                noteRepository.save(
+                        Note.createNote(noteDTO.getTitle(), member)
+                )
+        );
     }
 
     @Transactional

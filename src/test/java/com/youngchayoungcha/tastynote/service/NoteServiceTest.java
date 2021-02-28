@@ -35,7 +35,7 @@ public class NoteServiceTest {
     public void 노트생성_테스트(){
         //given
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.createMember(member);
+        Long memberId = memberRepository.save(member).getId();
 
 
         //when
@@ -52,7 +52,7 @@ public class NoteServiceTest {
     public void 노트수정_테스트(){
         //given
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.createMember(member);
+        Long memberId = memberRepository.save(member).getId();
         NoteDTO note = noteService.createNote(memberId, new NoteDTO("라멘노트"));
 
         //when
@@ -68,7 +68,7 @@ public class NoteServiceTest {
     public void 사용자_노트_조회(){
         //given
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.createMember(member);
+        Long memberId = memberRepository.save(member).getId();
         for(int i = 0; i < 5; i++){
             noteService.createNote(memberId, new NoteDTO("라멘노트" + i));
         }
@@ -90,7 +90,7 @@ public class NoteServiceTest {
     public void 사용자_노트_삭제(){
         //given
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.createMember(member);
+        Long memberId = memberRepository.save(member).getId();
         for(int i = 0; i < 5; i++){
             noteService.createNote(memberId, new NoteDTO("라멘노트" + i));
         }
