@@ -25,7 +25,6 @@ public class NoteServiceTest {
     MemberRepository memberRepository;
     @Autowired
     NoteRepository noteRepository;
-
     @Autowired
     NoteService noteService;
 
@@ -39,7 +38,7 @@ public class NoteServiceTest {
 
 
         //when
-        NoteDTO note = noteService.createNote(memberId, new NoteDTO("라멘노트"));
+        NoteDTO note = noteService.createNote(memberId, "라멘노트");
         Optional<Note> getNote = noteRepository.findNote(note.getId());
 
         //then
@@ -52,12 +51,13 @@ public class NoteServiceTest {
     public void 노트수정_테스트(){
         //given
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
+
         Long memberId = memberRepository.save(member).getId();
-        NoteDTO note = noteService.createNote(memberId, new NoteDTO("라멘노트"));
+        NoteDTO note = noteService.createNote(memberId,"라멘노트");
 
         //when
         Optional<Note> getNote = noteRepository.findNote(note.getId());
-        noteService.updateNote(getNote.get().getId(), new NoteDTO("라멘노트투투"));
+        noteService.updateNote(getNote.get().getId(),"라멘노트투투");
 
         //then
         Assertions.assertEquals(getNote.get().getTitle(), "라멘노트투투");
@@ -70,7 +70,7 @@ public class NoteServiceTest {
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
         Long memberId = memberRepository.save(member).getId();
         for(int i = 0; i < 5; i++){
-            noteService.createNote(memberId, new NoteDTO("라멘노트" + i));
+            noteService.createNote(memberId, "라멘노트" + i);
         }
 
         //when
@@ -92,7 +92,7 @@ public class NoteServiceTest {
         Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
         Long memberId = memberRepository.save(member).getId();
         for(int i = 0; i < 5; i++){
-            noteService.createNote(memberId, new NoteDTO("라멘노트" + i));
+            noteService.createNote(memberId,"라멘노트" + i);
         }
 
         //when

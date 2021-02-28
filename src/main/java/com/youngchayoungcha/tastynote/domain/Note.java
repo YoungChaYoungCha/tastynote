@@ -25,7 +25,7 @@ public class Note {
 
     // Lazy로 거는 것은 N+1 문제 때문
     // 해결하려면 JPQL Fetch join을 이용할 것.
-    @OneToMany(mappedBy = "note", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "note", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Post> posts = new LinkedHashSet<>();
 
     protected Note(){}

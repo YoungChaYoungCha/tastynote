@@ -2,25 +2,21 @@ package com.youngchayoungcha.tastynote.web.dto;
 
 import com.youngchayoungcha.tastynote.domain.Note;
 import com.youngchayoungcha.tastynote.domain.Post;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class NoteDTO {
-
 
     private Long id;
 
     private String title;
 
-    private Set<Post> posts;
+    private Set<PostResponseDTO> posts;
 
     public NoteDTO(String title) {
         this.title = title;
@@ -30,7 +26,7 @@ public class NoteDTO {
         NoteDTO noteDTO = new NoteDTO();
         noteDTO.id = note.getId();
         noteDTO.title = note.getTitle();
-        noteDTO.posts = note.getPosts();
+        noteDTO.posts = note.getPosts().stream().map(PostResponseDTO::fromEntity).collect(Collectors.toSet());
         return noteDTO;
     }
 
