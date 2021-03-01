@@ -56,7 +56,7 @@ public class PostServiceTest {
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
         List<String> tags = Collections.singletonList("태그");
         RestaurantDTO restaurantDTO = new RestaurantDTO("efwfzdf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
-        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목", "포스트 컨텐츠", 10, true, photoDTOs, tags, restaurantDTO));
+        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목", "포스트 컨텐츠", 10.0f, true, photoDTOs, tags, restaurantDTO));
         Optional<Post> post = postRepository.findPost(postResponseDTO.getId());
 
         //then
@@ -73,7 +73,7 @@ public class PostServiceTest {
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
         List<String> tags = Collections.singletonList("태그");
         RestaurantDTO restaurantDTO = new RestaurantDTO("efwfzdf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
-        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
+        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목", "포스트 컨텐츠", (float) 10, true, photoDTOs, tags, restaurantDTO));
 
         //when
         Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantDTO.getPlaceId());
@@ -98,7 +98,7 @@ public class PostServiceTest {
             }
         };
         RestaurantDTO restaurantDTO = new RestaurantDTO("efwfzdf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
-        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목", "포스트 컨텐츠", (short) 10, true, photoDTOs, tags, restaurantDTO));
+        PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목", "포스트 컨텐츠", (float) 10, true, photoDTOs, tags, restaurantDTO));
 
         //when
         MockMultipartFile modifiedFile = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
@@ -130,7 +130,7 @@ public class PostServiceTest {
                 }
             };
             RestaurantDTO restaurantDTO = new RestaurantDTO("dfqweqt", "멘텐" + i, "대한민국 서울특별시 ", 1.4, 2.4);
-            postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목" + i, "포스트 컨텐츠", (short) i, true, photoDTOs, tags, restaurantDTO));
+            postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목" + i, "포스트 컨텐츠", (float) i, true, photoDTOs, tags, restaurantDTO));
         }
         //when
         List<PostResponseDTO> postList1 = postService.getPostList(0, 5);

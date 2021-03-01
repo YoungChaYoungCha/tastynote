@@ -6,5 +6,7 @@ public class FileConfig {
 
     public static final String uploadFileBasePath = "./src/main/resources/static/upload/";
 
-    public static final String uploadFileBaseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/upload/";
+//    public static final String uploadFileBaseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/upload/";
+public static final String uploadFileBaseUrl = "http://localhost:8080/upload/";
+
 }

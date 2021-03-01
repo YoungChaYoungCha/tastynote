@@ -15,13 +15,13 @@ public class NoteResponseDTO {
 
     private String title;
 
-    private Set<PostResponseDTO> posts;
+    private Set<PostThumbnailResponseDTO> posts;
 
     public static NoteResponseDTO fromEntity(Note note){
         NoteResponseDTO noteDTO = new NoteResponseDTO();
         noteDTO.id = note.getId();
         noteDTO.title = note.getTitle();
-        noteDTO.posts = note.getPosts().stream().map(PostResponseDTO::fromEntity).collect(Collectors.toSet());
+        noteDTO.posts = note.getPosts().stream().map(PostThumbnailResponseDTO::fromEntity).collect(Collectors.toSet());
         return noteDTO;
     }
 
