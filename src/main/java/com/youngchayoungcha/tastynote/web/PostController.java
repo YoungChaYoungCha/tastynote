@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "posts")
@@ -23,14 +25,21 @@ public class PostController {
         return new ResponseEntity<>(postService.findPost(postId), HttpStatus.OK);
     }
 
+    // Page 5 씩 index
+    @GetMapping
+    public ResponseEntity<List<PostResponseDTO>> getPostList(@RequestParam(value = "page")int page, @RequestParam(value = "length", defaultValue = "5")int size) {
+        // TODO Filter Type -> 최신순, 거리순,
+        return new ResponseEntity<>(postService.getPostList(page, size), HttpStatus.OK);
+    }
+
     @PostMapping
-    public ResponseEntity<PostResponseDTO> createPost(@ModelAttribute PostCreateDTO post) throws IOException {
+    public ResponseEntity<PostResponseDTO> createPost(@ModelAttribute @Valid PostCreateDTO post) throws IOException {
         return new ResponseEntity<>(postService.createPost(post), HttpStatus.OK);
     }
 
     //TODO 게시물 주인만 post를 modify할 수 있도록 수정
     @PutMapping(value = "/{postId}")
-    public ResponseEntity<PostResponseDTO> modifyPost(@PathVariable(value = "postId") Long postId, @ModelAttribute PostModifyDTO post) throws IOException{
+    public ResponseEntity<PostResponseDTO> modifyPost(@PathVariable(value = "postId") Long postId, @ModelAttribute @Valid PostModifyDTO post) throws IOException{
         return new ResponseEntity<>(postService.modifyPost(post), HttpStatus.OK);
     }
 
