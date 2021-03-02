@@ -1,22 +1,18 @@
 package com.youngchayoungcha.tastynote.service;
 
 import com.youngchayoungcha.tastynote.config.FileConfig;
-import com.youngchayoungcha.tastynote.domain.Note;
-import com.youngchayoungcha.tastynote.domain.Photo;
-import com.youngchayoungcha.tastynote.domain.Post;
-import com.youngchayoungcha.tastynote.domain.Tag;
-import com.youngchayoungcha.tastynote.repository.NoteRepository;
-import com.youngchayoungcha.tastynote.repository.PhotoRepository;
-import com.youngchayoungcha.tastynote.repository.TagRepository;
+import com.youngchayoungcha.tastynote.domain.*;
+import com.youngchayoungcha.tastynote.repository.*;
+import com.youngchayoungcha.tastynote.repository.impl.PhotoRepository;
+import com.youngchayoungcha.tastynote.repository.RestaurantRepository;
 import com.youngchayoungcha.tastynote.util.FileUtils;
 import com.youngchayoungcha.tastynote.web.dto.*;
 import com.youngchayoungcha.tastynote.exception.ElementNotFoundException;
-import com.youngchayoungcha.tastynote.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -24,12 +20,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PostService {
 
     private final NoteRepository noteRepository;
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final PhotoRepository photoRepository;
+    private final RestaurantRepository restaurantRepository;
 
     @Transactional
     public PostResponseDTO createPost(PostCreateDTO postDTO) throws IOException {
@@ -37,36 +35,44 @@ public class PostService {
         note.orElseThrow(() -> new ElementNotFoundException(postDTO.getNoteId()));
 
         List<PhotoRequestDTO> photoDTOs = postDTO.getPhotos();
-        Set<Photo> photos = generatePhotos(photoDTOs);
+        List<Photo> photos = generatePhotos(photoDTOs);
+        Set<Tag> tags = findOrCreateTag(postDTO.getTags());
+        Restaurant restaurant = findOrCreateRestaurant(postDTO.getRestaurant(), postDTO.getScore());
 
-        List<Tag> tags = tagRepository.findOrCreateTags(postDTO.getTags());
-
-        Post post = Post.createPost(postDTO, photos, note.get(), tags);
+        Post post = Post.createPost(postDTO, photos, note.get(), tags, restaurant);
         postRepository.save(post);
+
+        refreshRestaurantScore(restaurant);
         return PostResponseDTO.fromEntity(post);
     }
 
-    public PostResponseDTO findPost(Long postId){
+    public PostResponseDTO findPost(Long postId) {
         Optional<Post> post = postRepository.findPost(postId);
         post.orElseThrow(() -> new ElementNotFoundException(postId));
 
         return PostResponseDTO.fromEntity(post.get());
     }
 
+    public List<PostResponseDTO> getPostList(int page, int size) {
+        List<Post> postList = postRepository.getPostList(page, size);
+        return postList.stream().map(PostResponseDTO::fromEntity).collect(Collectors.toList());
+    }
+
     @Transactional
-    public PostResponseDTO modifyPost(PostModifyDTO postDTO) throws IOException{
+    public PostResponseDTO modifyPost(PostModifyDTO postDTO) throws IOException {
         Optional<Post> post = postRepository.findPost(postDTO.getPostId());
         post.orElseThrow(() -> new ElementNotFoundException(postDTO.getPostId()));
 
-        Set<Photo> photos = generatePhotos(postDTO.getNewPhotos());
+        List<Photo> photos = generatePhotos(postDTO.getNewPhotos());
         // 기존 업로드된 파일은 로컬 스토리지에서 삭제.
-        photoRepository.getPhotoURLsByIds(postDTO.getDeletedPhotoIds()).forEach(FileUtils::deleteUploadedFileByUrl);
-
+        photoRepository.getPhotoUrlsByIds(postDTO.getDeletedPhotoIds()).forEach(FileUtils::deleteUploadedFileByUrl);
         List<TagModifyDTO> createEvent = postDTO.getTagEvents().stream().filter((data) -> data.getStatus().equals(TagEventStatus.CREATE)).collect(Collectors.toList());
-        List<Tag> tags = tagRepository.findOrCreateTags(createEvent.stream().map(TagModifyDTO::getTag).collect(Collectors.toList()));
+        Set<Tag> tags = findOrCreateTag(createEvent.stream().map(TagModifyDTO::getTag).collect(Collectors.toList()));
         Set<String> deleteTags = postDTO.getTagEvents().stream().filter((data) -> data.getStatus().equals(TagEventStatus.DELETE)).map(TagModifyDTO::getTag).collect(Collectors.toSet());
 
         post.get().modifyPost(postDTO, photos, tags, deleteTags);
+        refreshRestaurantScore(post.get().getRestaurant());
+
         return PostResponseDTO.fromEntity(post.get());
     }
 
@@ -74,12 +80,12 @@ public class PostService {
     public void deletePost(Long postId) {
         Optional<Post> post = postRepository.findPost(postId);
         post.orElseThrow(() -> new ElementNotFoundException(postId));
-
         postRepository.delete(post.get());
+        refreshRestaurantScore(post.get().getRestaurant());
     }
 
-    private Set<Photo> generatePhotos(List<PhotoRequestDTO> photoDTOs) throws IOException{
-        Set<Photo> photos = new LinkedHashSet<>();
+    private List<Photo> generatePhotos(List<PhotoRequestDTO> photoDTOs) throws IOException {
+        List<Photo> photos = new ArrayList<>();
         for (PhotoRequestDTO photo : photoDTOs) {
             String fileName = StringUtils.cleanPath(Objects.requireNonNull(photo.getFile().getOriginalFilename()));
             String newFileName = UUID.randomUUID() + "." + FileUtils.getFileExtensions(fileName);
@@ -89,4 +95,31 @@ public class PostService {
         return photos;
     }
 
+    private Set<Tag> findOrCreateTag(List<String> tagNames) {
+        Set<Tag> tags = tagRepository.findByNameIn(tagNames);
+        List<String> existsTags = tags.stream().map(Tag::getName).collect(Collectors.toList());
+        tagNames.removeAll(existsTags);
+
+        Set<Tag> resultTags = new LinkedHashSet<>(tags);
+        for (String tagName : tagNames) {
+            Tag tag = Tag.createTag(tagName);
+            tagRepository.save(tag);
+            resultTags.add(tag);
+        }
+        return resultTags;
+    }
+
+    private Restaurant findOrCreateRestaurant(RestaurantDTO dto, float score) {
+        Optional<Restaurant> restaurant = restaurantRepository.findById(dto.getPlaceId());
+        if (restaurant.isPresent()) {
+            refreshRestaurantScore(restaurant.get());
+            return restaurant.get();
+        } else {
+            return Restaurant.createRestaurant(dto.getPlaceId(), dto.getName(), dto.getFormattedAddress(), dto.getLatitude(), dto.getLongitude(), score);
+        }
+    }
+
+    private void refreshRestaurantScore(Restaurant restaurant) {
+        restaurant.setAverageScore((float) (restaurant.getPosts().stream().mapToDouble(Post::getScore).sum()));
+    }
 }
