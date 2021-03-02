@@ -24,7 +24,7 @@ public class NoteService {
 
     @Transactional
     public NoteResponseDTO createNote(Long memberId, String title){
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ElementNotFoundException(memberId));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new ElementNotFoundException(memberId));
         return NoteResponseDTO.fromEntity(noteRepository.save(Note.createNote(title, member)));
     }
 

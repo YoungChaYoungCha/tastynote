@@ -44,7 +44,7 @@ public class PostServiceTest {
     @BeforeEach
     public void initData() throws IOException {
         member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.createMember(member);
+        Long memberId = memberRepository.save(member).getId();
         noteDTO = noteService.createNote(memberId, "라멘노트");
     }
 

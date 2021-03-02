@@ -14,11 +14,11 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 //    @Query("select m from Member m where m.email=%:memberEmail%")
 //    Optional<Member> findMemberByEmail(String memberEmail);
-    Optional<Member> findByMemberId(Long id);
-
-    Optional<Member> findByMemberName(String name);
-
-    Boolean existsByMemberName(String name);
-
-    Boolean existsByMemberEmail(String email);
+//    Optional<Member> findByMemberName(String name);
+//
+    Optional<Member> findByEmail(String email);
+//
+//    Boolean existsByMemberName(String name);
+//
+//    Boolean existsByMemberEmail(String email);
 }
