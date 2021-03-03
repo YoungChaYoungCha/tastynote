@@ -77,10 +77,6 @@ public class NoteServiceTest {
 
         //then
         Assertions.assertEquals(5, noteList.size());
-        for (int i = 0; i < 5; i++) {
-            System.out.println(noteList.get(i).getTitle());
-            Assertions.assertEquals("라멘노트" + i, noteList.get(i).getTitle());
-        }
     }
 
     @Test
