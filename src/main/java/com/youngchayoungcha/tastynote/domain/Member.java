@@ -27,10 +27,8 @@ public class Member {
 
     private String name;
 
-    @Column(name="certified_key")
     private String certifiedKey;
 
-    @Column(name="is_certified")
     private Boolean isCertified;
 
     // 연관관계의 종

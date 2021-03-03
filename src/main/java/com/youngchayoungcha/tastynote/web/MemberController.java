@@ -1,6 +1,5 @@
 package com.youngchayoungcha.tastynote.web;
 
-import com.youngchayoungcha.tastynote.domain.Member;
 import com.youngchayoungcha.tastynote.service.MemberService;
 import com.youngchayoungcha.tastynote.web.dto.member.MemberCertifyDTO;
 import com.youngchayoungcha.tastynote.web.dto.member.MemberRegisterDTO;
@@ -10,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.xml.ws.Response;
 
 @RestController
 @RequiredArgsConstructor

@@ -9,12 +9,8 @@ import com.youngchayoungcha.tastynote.web.dto.member.MemberCertifyDTO;
 import com.youngchayoungcha.tastynote.web.dto.member.MemberRegisterDTO;
 import com.youngchayoungcha.tastynote.web.dto.member.MemberResponseDTO;
 import com.youngchayoungcha.tastynote.web.dto.member.MemberUpdateDTO;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.transaction.Transactional;
 
@@ -22,7 +18,7 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final EmailService emailService;
+    private final EmailServiceImpl emailServiceImpl;
 
     @Transactional
     public MemberResponseDTO register(MemberRegisterDTO memberDTO) {
@@ -36,7 +32,7 @@ public class MemberService {
                 .certifiedKey((member.getCertifiedKey()))
                 .build();
 
-        emailService.sendEmail(mailCertifiedDTO);
+        emailServiceImpl.sendEmail(mailCertifiedDTO);
 
         return responseDTO;
     }
@@ -50,11 +46,11 @@ public class MemberService {
 
     @Transactional
     public MemberResponseDTO certify(Long memberId, MemberCertifyDTO memberDTO) {
-        return memberRepository.findById(memberId)
-                .filter(mem->mem.getCertifiedKey().equals(memberDTO.getKey()))
-                .filter(Member::certify)
-                .map(MemberResponseDTO::fromEntity)
-                .orElseThrow(() -> new InvalidParameterException("Certify Key"));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new ElementNotFoundException(memberId));
+        if (member.getCertifiedKey().equals(memberDTO.getKey())) {
+            member.certify();
+            return MemberResponseDTO.fromEntity(member);
+        } else throw new InvalidParameterException("Certify Key");
     }
     
     @Transactional
