@@ -13,6 +13,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -54,7 +55,7 @@ public class PostServiceTest {
         //when
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
-        List<String> tags = Collections.singletonList("태그");
+        List<String> tags = new ArrayList<>(Collections.singletonList("태그"));
         RestaurantDTO restaurantDTO = new RestaurantDTO("efwfzdf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
         PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목", "포스트 컨텐츠", 10.0f, true, photoDTOs, tags, restaurantDTO));
         Optional<Post> post = postRepository.findPost(postResponseDTO.getId());
@@ -71,7 +72,7 @@ public class PostServiceTest {
     public void 포스트_삭제_테스트() throws IOException {
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "hello file".getBytes());
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
-        List<String> tags = Collections.singletonList("태그");
+        List<String> tags = new ArrayList<>(Collections.singletonList("태그"));
         RestaurantDTO restaurantDTO = new RestaurantDTO("efwfzdf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
         PostResponseDTO postResponseDTO = postService.createPost(new PostCreateDTO(noteDTO.getId(), "포스트 제목", "포스트 컨텐츠", (float) 10, true, photoDTOs, tags, restaurantDTO));
 
