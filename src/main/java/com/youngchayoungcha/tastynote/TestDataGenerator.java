@@ -42,6 +42,7 @@ public class TestDataGenerator implements CommandLineRunner {
 
         List<PhotoRequestDTO> photoDTOs = Collections.singletonList(new PhotoRequestDTO(file, "신기해"));
         List<String> tags = Collections.singletonList("태그");
+
         RestaurantDTO restaurantDTO = new RestaurantDTO("ieofqiewf", "멘텐", "대한민국 서울특별시 ", 1.4, 2.4);
         postService.createPost(new PostCreateDTO(note.getId(), "포스트 제목", "포스트 컨텐츠", 10.0f, true, photoDTOs, tags, restaurantDTO));
 
