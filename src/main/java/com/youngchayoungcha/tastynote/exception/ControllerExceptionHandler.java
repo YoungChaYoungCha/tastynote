@@ -66,4 +66,15 @@ public class ControllerExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(PasswordNotMatchedException.class)
+    protected ResponseEntity<ErrorResponse> handleMethodPasswordNotMatched(PasswordNotMatchedException exception) {
+        logger.error("Password not mached exception has been occured");
+
+        ErrorResponse errorResponse = ErrorResponse.create()
+                .message(exception.getMessage())
+                .status(400);
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }

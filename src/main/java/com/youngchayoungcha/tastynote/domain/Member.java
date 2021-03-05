@@ -27,10 +27,8 @@ public class Member {
 
     private String name;
 
-    @Column(name="certified_key")
     private String certifiedKey;
 
-    @Column(name="is_certified")
     private Boolean isCertified;
 
     // 연관관계의 종
@@ -68,11 +66,9 @@ public class Member {
         return this;
     }
 
-    public Boolean certify() {
+    public void certify() {
         this.isCertified = true;
-        return true;
     }
-
 
     public void saveCertifiedKey() {
         this.certifiedKey = generateCertifiedKey();

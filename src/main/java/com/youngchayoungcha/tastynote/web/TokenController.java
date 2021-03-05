@@ -26,6 +26,7 @@ public class TokenController {
         return ResponseEntity.ok(tokenService.refreshAccessToken(refreshTokenDTO));
     }
 
+    //for jwt test. delete later.
     @GetMapping("/hello/hello")
     public ResponseEntity<String> hello(@RequestBody String str) {
         return ResponseEntity.ok("hello");

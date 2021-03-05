@@ -5,6 +5,7 @@ import com.youngchayoungcha.tastynote.domain.Member;
 import com.youngchayoungcha.tastynote.domain.MemberRefreshToken;
 //import com.youngchayoungcha.tastynote.domain.PasswordValidator;
 import com.youngchayoungcha.tastynote.exception.ElementNotFoundException;
+import com.youngchayoungcha.tastynote.exception.PasswordNotMatchedException;
 import com.youngchayoungcha.tastynote.repository.MemberRefreshTokenRepository;
 import com.youngchayoungcha.tastynote.repository.MemberRepository;
 import com.youngchayoungcha.tastynote.util.JwtUtils;
@@ -14,7 +15,10 @@ import com.youngchayoungcha.tastynote.web.dto.auth.SignInRequestDTO;
 import com.youngchayoungcha.tastynote.web.dto.auth.TokenPairDTO;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import sun.security.util.Password;
 
 import javax.transaction.Transactional;
 
@@ -24,7 +28,7 @@ public class TokenService {
     private final JwtUtils jwtUtils;
     private final MemberRefreshTokenRepository memberRefreshTokenRepository;
     private final MemberRepository memberRepository;
-//    private final PasswordValidator passwordValidator;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public TokenPairDTO signIn(SignInRequestDTO signInRequestDTO) {
@@ -33,18 +37,16 @@ public class TokenService {
         Member member = memberRepository.findByEmail(signInRequestDTO.getEmail()).orElseThrow(() ->
                 new ElementNotFoundException(signInRequestDTO.getEmail(), ElementNotFoundException.ELEMENT_EMAIL));
 
-//        this.passwordValidator.validate(
-//                member,
-//                signInRequestDTO.getPassword()
-//        );
+        if (passwordEncoder.matches(signInRequestDTO.getPassword(), member.getPassword())) {
+            String jwtAccessToken = jwtUtils.generateAccessToken(member.getEmail());
+            String refreshToken = this.createRefreshToken(member);
 
-        String jwtAccessToken = jwtUtils.generateAccessToken(member.getEmail());
-        String refreshToken = this.createRefreshToken(member);
+            return TokenPairDTO.builder()
+                    .jwtAccessToken(jwtAccessToken)
+                    .refreshToken(refreshToken)
+                    .build();
+        } else throw new PasswordNotMatchedException();
 
-        return TokenPairDTO.builder()
-                            .jwtAccessToken(jwtAccessToken)
-                            .refreshToken(refreshToken)
-                            .build();
     }
 
     @Transactional
