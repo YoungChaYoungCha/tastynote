@@ -77,4 +77,15 @@ public class ControllerExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(CertifyNotCompleteException.class)
+    protected ResponseEntity<ErrorResponse> handleCertifyNotCompleteException(CertifyNotCompleteException exception) {
+        logger.error("Certify not complete exception has been occured");
+
+        ErrorResponse errorResponse = ErrorResponse.create()
+                .message(exception.getMessage())
+                .status(401);
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
 }

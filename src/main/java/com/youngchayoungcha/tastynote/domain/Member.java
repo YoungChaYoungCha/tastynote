@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -30,6 +31,8 @@ public class Member {
     private String certifiedKey;
 
     private Boolean isCertified;
+
+    private String refreshToken;
 
     // 연관관계의 종
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
@@ -89,6 +92,15 @@ public class Member {
 
         } while (sb.length() < 10);
         return sb.toString();
+    }
+
+    public void generateRefreshToken() {
+        String refreshToken = RandomStringUtils.randomAlphanumeric(128);
+        this.refreshToken = refreshToken;
+    }
+
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
     }
 
 }

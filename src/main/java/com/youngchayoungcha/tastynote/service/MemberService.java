@@ -20,7 +20,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final EmailServiceImpl emailServiceImpl;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -38,7 +38,7 @@ public class MemberService {
                 .certifiedKey((member.getCertifiedKey()))
                 .build();
 
-        emailServiceImpl.sendEmail(mailCertifiedDTO);
+        emailService.sendEmail(mailCertifiedDTO);
 
         return responseDTO;
     }
@@ -65,21 +65,4 @@ public class MemberService {
         memberRepository.delete(member);
         return memberId;
     }
-
-//    public void sendEmail(MailCertifiedDTO mailDTO) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(mailDTO.getAddress());
-//        message.setFrom(MemberService.FROM_ADDRESS);
-//        message.setSubject(mailDTO.getTitle());
-//        message.setText(mailDTO.getCertifiedKey());
-//
-//        javaMailSender.send(message);
-//    }
-//    @org.springframework.transaction.annotation.Transactional(readOnly = true)
-//    public MemberDTO findMemberByEmail(String email) {
-//        Member member = memberRepository.findMemberByEmail(email).orElseThrow(() -> new DuplicateEmailException(email));
-//        return MemberDTO.fromEntity(member);
-//    }
-
-
 }

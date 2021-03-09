@@ -28,20 +28,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        // Spring Security로 인해 생긴 문제를 해결하기 위해 우선 CSRF 비 활성화
-//        http.authorizeRequests().anyRequest().permitAll().and().csrf().disable();
-//    }
-
-// swagger 관련 리소스 시큐리티 필터 제거 필요. 제대로 이해는 못했기 때문에 공부해봐야함.
-//    @Override
-//    public void configure(WebSecurity web) throws Exception {
-//        web.ignoring().antMatchers(
-//        "/v2/api-docs", "/swagger-resource/**",
-//        "/swagger-ui.html", "/webjars/**", "/swagger/**", "/api/**", "/**);
-//    }
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/swagger-ui.html");
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -52,7 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/token/*").permitAll()
-                .antMatchers("/token/*/hello").authenticated()
+                //apply later
+                //.anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthFilter(this.jwtUtils), UsernamePasswordAuthenticationFilter.class);
     }

@@ -24,8 +24,8 @@ public class JwtUtils {
     @Value("${spring.jwt.jwtExpirationMs}")
     private long jwtExpirationMs;
 
-    public String generateAccessToken(String userPk) {
-        Claims claims = Jwts.claims().setId(userPk);
+    public String generateAccessToken(Long userId) {
+        Claims claims = Jwts.claims().setId(userId.toString());
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims)
@@ -36,8 +36,8 @@ public class JwtUtils {
     }
 
     public Authentication getAuthentication(String jwtToken) {
-        String userPk = Jwts.parser().setSigningKey(this.jwtSecret).parseClaimsJws(jwtToken).getBody().getId();
-        return new UsernamePasswordAuthenticationToken(userPk, null, new ArrayList<>());
+        String userId = Jwts.parser().setSigningKey(this.jwtSecret).parseClaimsJws(jwtToken).getBody().getId();
+        return new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
     }
 
     public boolean validateToken(String jwtToken) {

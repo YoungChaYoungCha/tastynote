@@ -1,7 +1,6 @@
 package com.youngchayoungcha.tastynote.controller;
 
 import com.youngchayoungcha.tastynote.domain.Member;
-import com.youngchayoungcha.tastynote.repository.MemberRefreshTokenRepository;
 import com.youngchayoungcha.tastynote.repository.MemberRepository;
 import com.youngchayoungcha.tastynote.util.JwtUtils;
 import com.youngchayoungcha.tastynote.web.dto.auth.AccessTokenDTO;
@@ -42,8 +41,8 @@ public class TokenControllerTests {
     @Autowired
     private MemberRepository memberRepository;
 
-    @Autowired
-    private MemberRefreshTokenRepository memberRefreshTokenRepository;
+//    @Autowired
+//    private MemberRefreshTokenRepository memberRefreshTokenRepository;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -60,7 +59,6 @@ public class TokenControllerTests {
 
     @After
     public void tearDown() throws Exception {
-        memberRefreshTokenRepository.deleteAll();
         memberRepository.deleteAll();
     }
 
@@ -116,6 +114,7 @@ public class TokenControllerTests {
         String jwtToken = responseEntity.getBody().getJwtAccessToken();
         String refreshToken = responseEntity.getBody().getRefreshToken();
         assertThat(jwtUtils.validateToken(jwtToken)).isEqualTo(true);
+        assertThat(memberRepository.findAll().get(0).getRefreshToken()).isEqualTo(refreshToken);
 
         //2. 리프레시 토큰을 통한 jwt 액세스 토큰 재발급
         RefreshTokenDTO refreshTokenDTO = new RefreshTokenDTO(refreshToken);
@@ -134,6 +133,6 @@ public class TokenControllerTests {
 
         assertThat(responseEntity3.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity3.getBody().booleanValue()).isEqualTo(true);
-
+        assertThat(memberRepository.findAll().get(0).getRefreshToken()).isEqualTo(null);
     }
 }
