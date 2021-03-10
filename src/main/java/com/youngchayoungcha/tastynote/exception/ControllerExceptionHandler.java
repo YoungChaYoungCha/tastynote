@@ -1,5 +1,6 @@
 package com.youngchayoungcha.tastynote.exception;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,26 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    protected ResponseEntity<ErrorResponse> handleConstraintViolationException() {
+        logger.error("handle constraint violation exception");
+
+        ErrorResponse errorResponse = ErrorResponse.create()
+                .message("Constraint Violdation")
+                .status(409);
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidParameterException.class)
+    protected ResponseEntity<ErrorResponse> handleInvalidParameterException() {
+        logger.error("handle invaild violation exception");
+
+        ErrorResponse errorResponse = ErrorResponse.create()
+                .message("Invalid Parameter")
+                .status(400);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(IOException.class)
     protected ResponseEntity<ErrorResponse> handleIoException(){
         logger.error("File io exception has been occurred");
@@ -44,5 +65,27 @@ public class ControllerExceptionHandler {
                 .status(400);
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PasswordNotMatchedException.class)
+    protected ResponseEntity<ErrorResponse> handleMethodPasswordNotMatched(PasswordNotMatchedException exception) {
+        logger.error("Password not mached exception has been occured");
+
+        ErrorResponse errorResponse = ErrorResponse.create()
+                .message(exception.getMessage())
+                .status(400);
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CertifyNotCompleteException.class)
+    protected ResponseEntity<ErrorResponse> handleCertifyNotCompleteException(CertifyNotCompleteException exception) {
+        logger.error("Certify not complete exception has been occured");
+
+        ErrorResponse errorResponse = ErrorResponse.create()
+                .message(exception.getMessage())
+                .status(401);
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 }

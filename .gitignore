@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### mail ###
+application-mail.properties
+application-jwt.properties

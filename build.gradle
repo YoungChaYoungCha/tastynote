@@ -26,11 +26,15 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.apache.commons:commons-lang3'
+	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'junit:junit:4.12'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-
 	// QueryDSL
 	implementation ("com.querydsl:querydsl-jpa:${queryDslVersion}")
 	annotationProcessor ("com.querydsl:querydsl-apt:${queryDslVersion}:jpa")

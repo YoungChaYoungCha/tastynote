@@ -34,7 +34,7 @@ public class TestDataGenerator implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
         Member member = Member.createMember("cbh1203@naver.com", "12341234", "훈키");
-        memberRepository.createMember(member);
+        memberRepository.save(member);
         Note note = Note.createNote("title", member);
         noteRepository.save(note);
 
