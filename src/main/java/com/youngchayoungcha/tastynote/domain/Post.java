@@ -69,6 +69,10 @@ public class Post extends BaseTimeEntity{
         this.postTags = this.postTags.stream().filter(postTag -> !deleteTags.contains(postTag.getTag().getName())).collect(Collectors.toSet());
     }
 
+    public boolean isOwner(Long memberId){
+        return (memberId.equals(this.getNote().getMember().getId()));
+    }
+
     private void addTags(Set<Tag> tags){
         for (Tag tag : tags) {
             PostTag postTag = PostTag.createPostTag(this, tag);
