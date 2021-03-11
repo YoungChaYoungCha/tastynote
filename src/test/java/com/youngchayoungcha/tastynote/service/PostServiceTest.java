@@ -13,8 +13,9 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
@@ -45,8 +46,9 @@ public class PostServiceTest {
     @BeforeEach
     public void initData() throws IOException {
         member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.save(member).getId();
-        noteDTO = noteService.createNote(memberId, "라멘노트");
+        String memberId = memberRepository.save(member).getId().toString();
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(memberId, null, new ArrayList<>()));
+        noteDTO = noteService.createNote("라멘노트");
     }
 
     @Test

@@ -2,9 +2,11 @@ package com.youngchayoungcha.tastynote.service;
 
 import com.youngchayoungcha.tastynote.config.FileConfig;
 import com.youngchayoungcha.tastynote.domain.*;
+import com.youngchayoungcha.tastynote.exception.UnAuthorizedResourceAccessException;
 import com.youngchayoungcha.tastynote.repository.*;
 import com.youngchayoungcha.tastynote.repository.impl.PhotoRepository;
 import com.youngchayoungcha.tastynote.repository.RestaurantRepository;
+import com.youngchayoungcha.tastynote.util.CurrentLoginInfoUtils;
 import com.youngchayoungcha.tastynote.util.FileUtils;
 import com.youngchayoungcha.tastynote.web.dto.*;
 import com.youngchayoungcha.tastynote.exception.ElementNotFoundException;
@@ -31,15 +33,20 @@ public class PostService {
 
     @Transactional
     public PostResponseDTO createPost(PostCreateDTO postDTO) throws IOException {
+        Long memberId = CurrentLoginInfoUtils.getLoginMemberId();
         Optional<Note> note = noteRepository.findNote(postDTO.getNoteId());
         note.orElseThrow(() -> new ElementNotFoundException(postDTO.getNoteId()));
+        Note noteEntity = note.get();
+        if (!noteEntity.isOwner(memberId)){
+            throw new UnAuthorizedResourceAccessException(noteEntity.getClass().getName(), noteEntity.getId(), memberId);
+        }
 
         List<PhotoRequestDTO> photoDTOs = postDTO.getPhotos();
         List<Photo> photos = generatePhotos(photoDTOs);
         Set<Tag> tags = findOrCreateTag(postDTO.getTags());
         Restaurant restaurant = findOrCreateRestaurant(postDTO.getRestaurant(), postDTO.getScore());
 
-        Post post = Post.createPost(postDTO, photos, note.get(), tags, restaurant);
+        Post post = Post.createPost(postDTO, photos, noteEntity, tags, restaurant);
         postRepository.save(post);
 
         refreshRestaurantScore(restaurant);
@@ -60,8 +67,14 @@ public class PostService {
 
     @Transactional
     public PostResponseDTO modifyPost(PostModifyDTO postDTO) throws IOException {
+        Long memberId = CurrentLoginInfoUtils.getLoginMemberId();
         Optional<Post> post = postRepository.findPost(postDTO.getPostId());
         post.orElseThrow(() -> new ElementNotFoundException(postDTO.getPostId()));
+
+        Post postEntity = post.get();
+        if (!postEntity.isOwner(memberId)) {
+            throw new UnAuthorizedResourceAccessException(postEntity.getClass().getName(), postEntity.getId(), memberId);
+        }
 
         List<Photo> photos = generatePhotos(postDTO.getNewPhotos());
         // 기존 업로드된 파일은 로컬 스토리지에서 삭제.
@@ -70,18 +83,25 @@ public class PostService {
         Set<Tag> tags = findOrCreateTag(createEvent.stream().map(TagModifyDTO::getTag).collect(Collectors.toList()));
         Set<String> deleteTags = postDTO.getTagEvents().stream().filter((data) -> data.getStatus().equals(TagEventStatus.DELETE)).map(TagModifyDTO::getTag).collect(Collectors.toSet());
 
-        post.get().modifyPost(postDTO, photos, tags, deleteTags);
-        refreshRestaurantScore(post.get().getRestaurant());
+        postEntity.modifyPost(postDTO, photos, tags, deleteTags);
+        refreshRestaurantScore(postEntity.getRestaurant());
 
-        return PostResponseDTO.fromEntity(post.get());
+        return PostResponseDTO.fromEntity(postEntity);
     }
 
     @Transactional
     public void deletePost(Long postId) {
+        Long memberId = CurrentLoginInfoUtils.getLoginMemberId();
         Optional<Post> post = postRepository.findPost(postId);
         post.orElseThrow(() -> new ElementNotFoundException(postId));
-        postRepository.delete(post.get());
-        refreshRestaurantScore(post.get().getRestaurant());
+        Post postEntity = post.get();
+
+        if (!postEntity.isOwner(memberId)) {
+            throw new UnAuthorizedResourceAccessException(postEntity.getClass().getName(), postEntity.getId(), memberId);
+        }
+
+        postRepository.delete(postEntity);
+        refreshRestaurantScore(postEntity.getRestaurant());
     }
 
     private List<Photo> generatePhotos(List<PhotoRequestDTO> photoDTOs) throws IOException {

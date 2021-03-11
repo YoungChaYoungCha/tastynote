@@ -1,5 +1,6 @@
 package com.youngchayoungcha.tastynote.domain;
 
+import com.youngchayoungcha.tastynote.exception.UnAuthorizedResourceAccessException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +45,10 @@ public class Note {
 
     public void setMember(Member member){
         this.member = member;
+    }
+
+    public boolean isOwner(Long memberId){
+        return (memberId.equals(this.getMember().getId()));
     }
 
     public void modifyNote(String title) {
