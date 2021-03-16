@@ -1,7 +1,6 @@
 package com.youngchayoungcha.tastynote.web.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 

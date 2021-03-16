@@ -6,13 +6,18 @@ import com.youngchayoungcha.tastynote.repository.NoteRepository;
 import com.youngchayoungcha.tastynote.web.dto.NoteResponseDTO;
 import com.youngchayoungcha.tastynote.repository.MemberRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,16 +33,21 @@ public class NoteServiceTest {
         @Autowired
         NoteService noteService;
 
+    private Member member;
+
+    @BeforeEach
+    public void initData() throws IOException {
+        member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
+        String memberId = memberRepository.save(member).getId().toString();
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(memberId, null, new ArrayList<>()));
+    }
+
 
     @Test
     @Transactional
     public void 노트생성_테스트(){
-        //given
-        Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.save(member).getId();
-
         //when
-        NoteResponseDTO note = noteService.createNote(memberId, "라멘노트");
+        NoteResponseDTO note = noteService.createNote("라멘노트");
         Optional<Note> getNote = noteRepository.findNote(note.getId());
 
         //then
@@ -49,10 +59,7 @@ public class NoteServiceTest {
     @Transactional
     public void 노트수정_테스트(){
         //given
-        Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-
-        Long memberId = memberRepository.save(member).getId();
-        NoteResponseDTO note = noteService.createNote(memberId,"라멘노트");
+        NoteResponseDTO note = noteService.createNote("라멘노트");
 
         //when
         Optional<Note> getNote = noteRepository.findNote(note.getId());
@@ -65,41 +72,29 @@ public class NoteServiceTest {
     @Test
     @Transactional
     public void 사용자_노트_조회(){
-        //given
-        Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.save(member).getId();
         for(int i = 0; i < 5; i++){
-            noteService.createNote(memberId, "라멘노트" + i);
+            noteService.createNote("라멘노트" + i);
         }
 
         //when
-        System.out.println(memberId);
-        List<NoteResponseDTO> noteList = noteService.getMemberNotes(memberId);
+        List<NoteResponseDTO> noteList = noteService.getMemberNotes(member.getId());
 
         //then
         Assertions.assertEquals(5, noteList.size());
-        for (int i = 0; i < 5; i++) {
-            System.out.println(noteList.get(i).getTitle());
-            Assertions.assertEquals("라멘노트" + i, noteList.get(i).getTitle());
-        }
     }
 
     @Test
     @Transactional
     public void 사용자_노트_삭제(){
-        //given
-        Member member = Member.createMember("cbh1203@naver.com", "asdfasdf", "훈키");
-        Long memberId = memberRepository.save(member).getId();
         for(int i = 0; i < 5; i++){
-            noteService.createNote(memberId,"라멘노트" + i);
+            noteService.createNote("라멘노트" + i);
         }
-
         //when
-        List<NoteResponseDTO> notes = noteService.getMemberNotes(memberId);
+        List<NoteResponseDTO> notes = noteService.getMemberNotes(member.getId());
         noteService.deleteNote(notes.get(0).getId());
 
         //then
-        List<NoteResponseDTO> newNotes = noteService.getMemberNotes(memberId);
+        List<NoteResponseDTO> newNotes = noteService.getMemberNotes(member.getId());
         Assertions.assertEquals(4, newNotes.size());
     }
 

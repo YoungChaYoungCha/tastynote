@@ -2,7 +2,6 @@ package com.youngchayoungcha.tastynote.web.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-
 import javax.validation.constraints.NotEmpty;
 
 @Getter

@@ -4,6 +4,11 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/tastynote
+#    username: chaebyeonghun
+#    password:
+#    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
