@@ -26,12 +26,12 @@ import java.util.Optional;
 @Transactional
 public class NoteServiceTest {
 
-    @Autowired
-    MemberRepository memberRepository;
-    @Autowired
-    NoteRepository noteRepository;
-    @Autowired
-    NoteService noteService;
+        @Autowired
+        MemberRepository memberRepository;
+        @Autowired
+        NoteRepository noteRepository;
+        @Autowired
+        NoteService noteService;
 
     private Member member;
 
@@ -86,7 +86,6 @@ public class NoteServiceTest {
     @Test
     @Transactional
     public void 사용자_노트_삭제(){
-        //given
         for(int i = 0; i < 5; i++){
             noteService.createNote("라멘노트" + i);
         }

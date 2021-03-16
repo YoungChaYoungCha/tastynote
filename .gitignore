@@ -36,9 +36,12 @@ out/
 ### VS Code ###
 .vscode/
 
+<<<<<<< HEAD
+=======
 ### application yml ###
 application.yml
 
+>>>>>>> 6c0c15fdcea3d6285de8398a62d41ee9b1e84317
 ### mail ###
 application-mail.properties
 application-jwt.properties
