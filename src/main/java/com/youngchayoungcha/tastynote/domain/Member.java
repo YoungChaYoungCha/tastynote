@@ -35,7 +35,7 @@ public class Member extends BaseTimeEntity {
     private String refreshToken;
 
     // 연관관계의 종
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Note> notes = new LinkedHashSet<>();
 
     @PrePersist

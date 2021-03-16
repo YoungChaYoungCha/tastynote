@@ -21,12 +21,12 @@ import java.util.Optional;
 @Transactional
 public class NoteServiceTest {
 
-    @Autowired
-    MemberRepository memberRepository;
-    @Autowired
-    NoteRepository noteRepository;
-    @Autowired
-    NoteService noteService;
+        @Autowired
+        MemberRepository memberRepository;
+        @Autowired
+        NoteRepository noteRepository;
+        @Autowired
+        NoteService noteService;
 
 
     @Test
